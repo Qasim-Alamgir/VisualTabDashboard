@@ -1,0 +1,107 @@
+<!-- Sidebar -->
+<div style="position: relative; height: 100%;">
+    <ul *ngIf="userProfile" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+        <button (click)="closeNav()" class="btn d-md-none rounded-circle mr-3">
+            <i class="fa fa-arrow-left"></i>
+        </button>
+        <!-- Sidebar - Brand
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="javascript:void(0)">
+
+            <div class="sidebar-brand-text mx-3"><img src="./assets/admin/img/logo-inner.svg" /></div>
+        </a> -->
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+            <a class="nav-link" [routerLink]="['/admin']">
+                <i><img src="./assets/admin/img/dash.svg"/></i>
+                <span>Dashboard</span></a>
+        </li>
+        <!-- Nav Item - Charts -->
+
+        <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser == 'dev'">
+            <a class="nav-link" [routerLink]="['/admin/manage-admins']">
+                <i><img src="./assets/admin/img/userprofile.svg"/></i>
+                <span>Manage Super Admins</span>
+            </a>
+        </li>
+
+        <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser == 'dev' || isUser == 'admin' || userProfile.manage_managers == 'true' || userProfile.manage_supervisors == 'true'">
+            <a class="nav-link" [routerLink]="['/admin/manage-users']">
+                <i><img src="./assets/admin/img/userprofile.svg"/></i>
+                <span>Manage Web-Portal User</span>
+            </a>
+        </li>
+
+        <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser == 'dev' || isUser == 'admin' || userProfile.manage_employees == 'true'">
+            <a class="nav-link" [routerLink]="['/admin/management-users']">
+                <i><img src="./assets/admin/img/userprofile.svg"/></i>
+                <span>Manage App Users</span>
+            </a>
+        </li>
+        <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser == 'dev' || isUser == 'admin'">
+            <a class="nav-link" [routerLink]="['/admin/manage-departments']">
+                <i><img src="./assets/admin/img/userprofile.svg"/></i>
+                <span>Manage Departments</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Tables -->
+        <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser == 'dev' || isUser == 'admin' || userProfile.manage_surveys == 'true'">
+            <a class="nav-link" [routerLink]="['/admin/manage-surveys']">
+                <i><i><img src="./assets/admin/img/newsurvey.svg"/></i></i>
+                <span>Create New Survey</span></a>
+        </li>
+
+        <!-- Nav Item - Tables -->
+        <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser == 'dev' || isUser == 'admin' || userProfile.manage_reports== 'true'">
+            <a class="nav-link" [routerLink]="['/admin/survey-report']">
+                <i><i><img src="./assets/admin/img/surveyreport.svg"/></i></i>
+                <span>Manage Reports</span></a>
+        </li>
+        <!-- Nav Item - Tables -->
+        <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser == 'dev' || isUser == 'admin' || userProfile.track_employees == 'true'">
+            <a class="nav-link" [routerLink]="['/admin/track-users/all']">
+                <i><i><img src="./assets/admin/img/trackoffsite.svg"/></i></i>
+                <span>Track App Users</span></a>
+        </li>
+        <!-- Nav Item - Tables -->
+        <li class="nav-item " [routerLinkActive]="['emergency']" *ngIf="isUser == 'dev' || isUser == 'admin' || userProfile.manage_messages == 'true'">
+            <a class="nav-link" [routerLink]="['/admin/manage-messages']">
+                <i><i><img src="./assets/admin/img/emergency.svg"/></i></i>
+                <span>Send Emergency Message</span></a>
+        </li>
+        <li class="nav-item " [routerLinkActive]="['active']" *ngIf="isUser == 'dev' || isUser == 'admin' || userProfile.manage_messages == 'true'">
+            <a class="nav-link" [routerLink]="['/admin/push-notifications']">
+                <i><i><img src="./assets/admin/img/emergency.svg"/></i></i>
+                <span>Send Message</span></a>
+        </li>
+        <!-- Nav Item - Tables -->
+        <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser == 'dev'">
+            <a class="nav-link" [routerLink]="['/admin/add-radius']">
+                <i><i><img src="./assets/admin/img/2meter.svg"/></i></i>
+                <span>Add Location</span></a>
+        </li>
+        <!-- <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isUser != 'dev' && isUser!='admin'">
+            <a class="nav-link" [routerLink]="['/admin/show-radius']">
+                <i><i><img src="./assets/admin/img/2meter.svg"/></i></i>
+                <span>Show Location</span></a>
+        </li> -->
+        <li class="nav-item" *ngIf="isUser == 'dev'">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+                <i><img class="imgSize" src="./assets/admin/img/administration.svg"/></i>
+                <span>Manage Content Pages</span>
+            </a>
+            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Pages</h6>
+                    <a class="collapse-item" routerLinkActive="active" [routerLink]="['footer-copyright']">Footer</a>
+                </div>
+            </div>
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+
+    </ul>
+</div>
+<!-- End of Sidebar -->

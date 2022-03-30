@@ -1,0 +1,222 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <div class="row col-reverse">
+        <div class="col-lg-9 mb-4">
+            <div #topScrollAnchor class="agm-container" *ngIf="onsiteUser">
+                <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [fullscreenControl]='true' [mapTypeControl]='true'>
+                    <div *ngFor="let item of onSiteData">
+                        <!-- <div *ngFor="let item of onsiteUser"> -->
+                        <!-- <agm-marker *ngIf="item.check_site?.onsite == 'true'" [iconUrl]="onSiteIcon" [latitude]="item.check_site.lat" [longitude]="item.check_site.lng">
+                            <agm-info-window>{{item.name}}</agm-info-window>
+                        </agm-marker>
+                        <agm-marker *ngIf="item.check_site?.onsite == 'false'" [iconUrl]="offSiteIcon" [latitude]="item.check_site.lat" [longitude]="item.check_site.lng">
+                            <agm-info-window>{{item.name}}</agm-info-window>
+                        </agm-marker> -->
+                        <agm-marker [iconUrl]="onSiteIcon" [latitude]="item.lat" [longitude]="item.lng">
+                            <agm-info-window>{{item.name}}</agm-info-window>
+                        </agm-marker>
+                    </div>
+                    <div *ngFor="let item of offSiteData">
+                        <agm-marker [iconUrl]="offSiteIcon" [latitude]="item.lat" [longitude]="item.lng">
+                            <agm-info-window>{{item.name}}</agm-info-window>
+                        </agm-marker>
+                    </div>
+                    <div *ngIf="PolygonsArray">
+                        <div *ngFor="let polygon of PolygonsArray">
+                            <agm-polygon [paths]="polygon.pointList " fillColor="#0680fc " fillOpacity=".05 "
+                                strokeColor="#0680fc " *ngFor="let pathsOfPol of polygon.pointList ">
+                            </agm-polygon>
+                        </div>
+                    </div>
+                </agm-map>
+            </div>
+        </div>
+        <div class="col-lg-3 mb-4">
+            <div class="row" *ngIf="dashboard">
+                <!-- Employee registered Example -->
+                <div class="col-lg-12 col-md-6 mb-2">
+                    <div class="card home-icons shadow">
+                        <div class="card-body">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="h2 mb-0 font-weight-bold green">{{dashboard['employees'].length}}</div>
+                                    <div class="title font-weight-bold text-uppercase mb-1">Employees</div>
+
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-home"><img src="./assets/admin/img/registered.svg" /></div>
+                                </div>
+                                <!-- <div class="col-12">
+                                    <a href="" class="btn btn-outline-primary" [routerLink]="['/admin/management-users']">Add New Employee</a>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="" class="btn btn-outline-primary" [routerLink]="['/admin/management-users']">Add New Employee</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-lg-12 col-md-6 mb-2">
+                    <div class="card home-icons shadow">
+                        <div class="card-body">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="h2 mb-0 font-weight-bold green">{{onsite}}</div>
+                                    <div class="title font-weight-bold text-uppercase mb-1">Onsite Employee</div>
+
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-home"><img src="./assets/admin/img/onsite.svg" /></div>
+                                </div>
+                                <!-- <div class="col-12">
+                                    <a href="javascript:void(0)" [routerLink]="['user-detail/onSite']" class="btn btn-outline-primary">View Onsite Employee</a>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="javascript:void(0)" [routerLink]="['user-detail/onSite']" class="btn btn-outline-primary">View Onsite Employee</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-lg-12 col-md-6 mb-2">
+                    <div class="card home-icons shadow">
+                        <div class="card-body">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="h2 mb-0 font-weight-bold green">{{offsite}}</div>
+                                    <div class="title font-weight-bold text-uppercase mb-1">Offsite Employee</div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-home"><img src="./assets/admin/img/offsite.svg" /></div>
+                                </div>
+                                <!-- <div class="col-12">
+                                    <a href="javascript:void(0)" [routerLink]="['user-detail/offSite']" class="btn btn-outline-primary">View Offsite Employee </a>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="javascript:void(0)" [routerLink]="['user-detail/offSite']" class="btn btn-outline-primary">View Offsite Employee </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-lg-12 col-md-6 mb-2">
+                    <div class="card home-icons shadow">
+                        <div class="card-body">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="h2 mb-0 font-weight-bold green">{{reports}}</div>
+                                    <div class="title font-weight-bold text-uppercase mb-1">Survey Reports</div>
+
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-home"><img src="./assets/admin/img/sendsurvey.svg" /></div>
+                                </div>
+                                <!-- <div class="col-12">
+                                    <a [routerLink]="['survey-report']" class="btn btn-outline-primary">View Survey Report</a>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a [routerLink]="['survey-report']" class="btn btn-outline-primary">View Survey Report</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-6 mb-2">
+                    <div class="card home-icons shadow">
+                        <div class="card-body">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="h2 mb-0 font-weight-bold green">{{dashboard['employees'].length}}</div>
+                                    <div class="title font-weight-bold text-uppercase mb-1">Asset Tracking</div>
+
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-home"><img src="./assets/admin/img/registered.svg" /></div>
+                                </div>
+                                <!-- <div class="col-12">
+                                    <a href="" class="btn btn-outline-primary" [routerLink]="['/admin/management-users']">Add New Employee</a>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="javascript:void(0)" class="btn btn-outline-primary">View Asset Tracking</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-lg-12 col-md-6 mb-2">
+                    <div class="card home-icons shadow">
+                        <div class="card-body">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="h2 mb-0 font-weight-bold green">{{onsite}}</div>
+                                    <div class="title font-weight-bold text-uppercase mb-1">Workforce</div>
+
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-home"><img src="./assets/admin/img/onsite.svg" /></div>
+                                </div>
+                                <!-- <div class="col-12">
+                                    <a href="javascript:void(0)" [routerLink]="['user-detail/onSite']" class="btn btn-outline-primary">View Onsite Employee</a>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="javascript:void(0)" class="btn btn-outline-primary">Manage Workforce</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-lg-12 col-md-6 mb-2">
+                    <div class="card home-icons shadow">
+                        <div class="card-body">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="h2 mb-0 font-weight-bold green">{{offsite}}</div>
+                                    <div class="title font-weight-bold text-uppercase mb-1">Delivery</div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-home"><img src="./assets/admin/img/offsite.svg" /></div>
+                                </div>
+                                <!-- <div class="col-12">
+                                    <a href="javascript:void(0)" [routerLink]="['user-detail/offSite']" class="btn btn-outline-primary">View Offsite Employee </a>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="javascript:void(0)" class="btn btn-outline-primary">Manage Delivery </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-lg-12 col-md-6 mb-2">
+                    <div class="card home-icons shadow">
+                        <div class="card-body">
+                            <div class="row no-gutters">
+                                <div class="col mr-2">
+                                    <div class="h2 mb-0 font-weight-bold green">{{reports}}</div>
+                                    <div class="title font-weight-bold text-uppercase mb-1">Parking</div>
+
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-home"><img src="./assets/admin/img/sendsurvey.svg" /></div>
+                                </div>
+                                <!-- <div class="col-12">
+                                    <a [routerLink]="['survey-report']" class="btn btn-outline-primary">View Survey Report</a>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="javascript:void(0)" class="btn btn-outline-primary">Manage Parking</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+<ngx-spinner></ngx-spinner>

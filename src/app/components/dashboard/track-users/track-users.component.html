@@ -1,0 +1,70 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <div class="row m-1">
+        <div class="col-3" *ngIf="userType == 'dev' || userType == 'admin' || userType == 'director'">
+            <label *ngIf="userType == 'dev' || userType == 'admin' || userType == 'director'">Department*</label>
+            <select class="form-control" [(ngModel)]="ngDepartment" [ngModelOptions]="{standalone: true}" (change)="changeDepartment($event)" *ngIf="userType == 'dev' || userType == 'admin'">
+                <option class="form-control" value="" disabled>Select Department</option>
+                <option class="form-control" *ngFor="let item of departmentsData" value="{{item.value}}" style="text-transform: uppercase;">{{item.department}}</option>
+            </select>
+            <select class="form-control" [(ngModel)]="ngDepartment" [ngModelOptions]="{standalone: true}" (change)="changeDepartment($event)" *ngIf="userType == 'director'">
+                <option class="form-control" value="" disabled>Select Department</option>
+                <option class="form-control" *ngFor="let item of departmentsData" value="{{item}}">{{item}}</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <label>Role*</label>
+            <select class="form-control" (change)="changeDepartment($event)" [(ngModel)]="ngRole" [ngModelOptions]="{standalone: true}">
+                <option class="form-control" value="" disabled>Select Role</option>
+                <option class="form-control" value="director" *ngIf="userType == 'dev' ||userType == 'admin'">Director</option>
+                <option class="form-control" value="manager" *ngIf="userType == 'dev' ||userType == 'admin' || userType == 'director'">Manager</option>
+                <option class="form-control" value="superviser" *ngIf="userType == 'dev' || userType == 'admin' || userType == 'director' || userType == 'manager'">Supervisor</option>
+                <option class="form-control" value="employee" *ngIf="userType == 'dev' || userType == 'admin' || userType == 'director' || userType == 'manager' || userType == 'superviser'">Employee</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <label>Select Employee*</label>
+            <ng-select2  [data]="exampleData" [width]="250" [height]="100" [(ngModel)]="ngEmployee" [ngModelOptions]="{standalone: true}">
+            </ng-select2>
+        </div>
+        <div class="col-3">
+            <label>Select Date*</label>
+            <input type="date" class="form-control" [(ngModel)]="ngDate" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div class="col-12">
+            <button [disabled]="ngEmployee==''" class="btn btn-primary btn-block" style="margin-top: 31px;" (click)="userTrackPoints()">Search</button>
+        </div>
+    </div>
+</div>
+<agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
+    <div *ngIf="waypoints.length > 0">
+        <agm-marker [iconUrl]="destinationIcon" [latitude]="destination.lat"
+            [longitude]="destination.lng" [agmFitBounds]="true"
+            [label]="{color: 'white', text: 'End Point',fontWeight: 'bold',fontSize: '12px'}">
+            <agm-info-window>{{destination.created_at | date:'shortTime'}}</agm-info-window>
+        </agm-marker>
+        <agm-marker [iconUrl]="originIcon" [latitude]="origin.lat" [longitude]="origin.lng"
+            [agmFitBounds]="true"
+            [label]="{color: 'white', text: 'Start Point',fontWeight: 'bold',fontSize: '12px'}">
+            <agm-info-window>{{origin.created_at | date:'shortTime'}}</agm-info-window>
+        </agm-marker>
+        <agm-marker [iconUrl]="circle" *ngFor="let data of waypoints;let j=index"
+            [latitude]="data.lat" [longitude]="data.lng" [agmFitBounds]="true">
+            <agm-info-window>{{data.created_at | date:'shortTime'}}</agm-info-window>
+        </agm-marker>
+        <agm-polyline [visible]="true" [strokeWeight]="3" [strokeColor]="'#ff2f00'">
+            <agm-polyline-point *ngFor="let data of waypoints; let i=index"
+                [latitude]="data.lat" [longitude]="data.lng">
+            </agm-polyline-point>
+        </agm-polyline>
+    </div>
+    <div *ngIf="PolygonsArray">
+        <div *ngFor="let polygon of PolygonsArray">
+            <agm-polygon [paths]="polygon.pointList " fillColor="#0680fc " fillOpacity=".05 "
+                strokeColor="#0680fc " *ngFor="let pathsOfPol of polygon.pointList ">
+            </agm-polygon>
+        </div>
+    </div>
+</agm-map>
+<!-- /.container-fluid -->
+<ngx-spinner></ngx-spinner>

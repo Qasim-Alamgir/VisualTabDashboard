@@ -1,0 +1,42 @@
+ul {
+    height: 100%;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 425px) {
+    .nav-link{
+        display: flex;
+        width: inherit !important;
+    }
+    .nav-link span{
+        align-self: center;
+        margin-left: 16px;
+        font-size: 0.8rem;
+    }
+    
+    .nav-link img{
+        width: 35px;
+    }
+
+    .navbar-nav{
+        position: absolute;
+        z-index: 1;
+    }
+
+    .navbar-nav button{
+        position: absolute;
+        right: 0;
+        top: 15px;
+        z-index: 3;
+        color: white
+    }
+
+    .sidebar-brand .sidebar-brand-text {
+        display: block;
+    }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 2560px) {
+    .sidebar-brand-text img{
+        width: 100px;
+    }
+}

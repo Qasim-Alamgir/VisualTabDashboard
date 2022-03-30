@@ -1,0 +1,49 @@
+<div class="p-2">
+    <div class="card">
+        <div class="card shadow mb-4">
+            <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                <h6 class="m-0 font-weight-bold text-primary">Report Filters</h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="form-row mb-2">
+                        <div class="col-6 mb-2">
+                            <mat-form-field>
+                                <label>Department</label>
+                                <input class="form-control" type="text" placeholder="Choose Department" aria-label="Number" matInput [formControl]="departmentControl" [matAutocomplete]="auto">
+                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="changeDepartment($event.option.value)">
+                                    <mat-option *ngFor="let option of departmentfilteredOptions | async" [value]="option">
+                                        {{option}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <mat-form-field>
+                                <label>Employee</label>
+                                <input class="form-control" type="text" placeholder="Choose Employee" aria-label="Number" matInput [formControl]="employeeControl" [matAutocomplete]="autos">
+                                <mat-autocomplete #autos="matAutocomplete">
+                                    <mat-option *ngFor="let option of employeefilteredOptions | async" [value]="option">
+                                        {{option}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6">
+                            <label>From Date</label>
+                            <input class="form-control" type="date" placeholder="Choose Date" [formControl]="dateControl">
+                        </div>
+                        <div class="col-6">
+                            <label>To Date</label>
+                            <input class="form-control" type="date" placeholder="Choose Date" [formControl]="enddateControl">
+                        </div>
+                    </div>
+
+                    <button (click)="getReportsData()" [disabled]="departmentControl.value == '' || employeeControl.value == ''" class="btn btn-primary mb-2 btn-block">Get Record</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<ngx-spinner></ngx-spinner>

@@ -1,0 +1,133 @@
+<div class="container-fluid">
+    <div class="col-xl-12 col-md-12 mb-4" *ngIf="type=='onSite'">
+        <div class="card shadow mb-4">
+            <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                <h6 class="m-0 font-weight-bold text-primary">OnSite Employee's</h6>
+            </div>
+            <div class="card-body" *ngIf="onSite">
+                <div class="table-responsive">
+                    <table class="table table-bordered" datatable width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let employee of onSite; let j=index">
+                                <td class="text-capitalize">{{employee.name}}</td>
+                                <td>{{employee.email}}</td>
+                                <td class="text-capitalize">{{employee.department}}</td>
+                                <td class="text-capitalize">{{employee.user_type}}</td>
+                                <td>
+                                    <a (click)="setID(employee.id,employee.name)" title="Track Users"
+                                        href="javascript:void(0)" class="btn btn-primary marginButtonRight"><i
+                                            class="fa fa-eye"></i></a>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-md-12 mb-4" *ngIf="type=='offSite'">
+        <div class="card shadow mb-4">
+            <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                <h6 class="m-0 font-weight-bold text-primary">OffSite Employee's</h6>
+            </div>
+            <div class="card-body" *ngIf="offSite">
+                <div class="table-responsive">
+                    <table class="table table-bordered" datatable width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let employee of offSite; let j=index">
+                                <td class="text-capitalize">{{employee.name}}</td>
+                                <td>{{employee.email}}</td>
+                                <td class="text-capitalize">{{employee.department}}</td>
+                                <td class="text-capitalize">{{employee.user_type}}</td>
+                                <td>
+                                    <a (click)="setID(employee.id,employee.name)" title="Track Users"
+                                        href="javascript:void(0)" class="btn btn-primary marginButtonRight"><i
+                                            class="fa fa-eye"></i></a>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{name}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <div class="col-3">
+                            <input style="margin-top: 28px;" class="form-control" [(ngModel)]="ngDate"
+                                [ngModelOptions]="{standalone: true}" type="date" placeholder="Choose Date">
+                        </div>
+                        <div class="col-3">
+                            <timepicker [(ngModel)]="ngStartTime" [ngModelOptions]="{standalone: true}"></timepicker>
+                        </div>
+                        <div class="col-3">
+                            <timepicker [(ngModel)]="ngEndTime" [ngModelOptions]="{standalone: true}"></timepicker>
+                        </div>
+                        <div class="col-3">
+                            <button style="margin-top: 28px;" class="btn btn-primary btn-block"
+                                (click)="filterPoints()">Filter</button>
+                        </div>
+                    </div>
+                    <div #topScrollAnchor class="agm-container">
+                        <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
+                            <div *ngIf="waypoints.length > 0">
+                                <agm-marker [iconUrl]="destinationIcon" [latitude]="destination.lat"
+                                    [longitude]="destination.lng" [agmFitBounds]="true"
+                                    [label]="{color: 'white', text: 'Destination',fontWeight: 'bold',fontSize: '10px'}">
+                                    <agm-info-window>{{destination.created_at | date:'shortTime'}}</agm-info-window>
+                                </agm-marker>
+                                <agm-marker [iconUrl]="originIcon" [latitude]="origin.lat" [longitude]="origin.lng"
+                                    [agmFitBounds]="true"
+                                    [label]="{color: 'white', text: 'Origin',fontWeight: 'bold',fontSize: '10px'}">
+                                    <agm-info-window>{{origin.created_at | date:'shortTime'}}</agm-info-window>
+                                </agm-marker>
+                                <agm-marker [iconUrl]="circle" *ngFor="let data of waypoints;let j=index"
+                                    [latitude]="data.lat" [longitude]="data.lng" [agmFitBounds]="true"
+                                    [label]="{color: 'white', text: j.toString(), fontSize:'8px'}"
+                                    >
+                                    <agm-info-window>{{data.created_at | date:'shortTime'}}</agm-info-window>
+                                </agm-marker>
+                                <agm-polyline [visible]="true" [strokeWeight]="3" [strokeColor]="'#007bff'">
+                                    <agm-polyline-point *ngFor="let data of waypoints; let i=index"
+                                        [latitude]="data.lat" [longitude]="data.lng">
+                                    </agm-polyline-point>
+                                </agm-polyline>
+                            </div>
+                            <div *ngIf="PolygonsArray">
+                                <div *ngFor="let polygon of PolygonsArray">
+                                    <agm-polygon [paths]="polygon.pointList " fillColor="#0680fc " fillOpacity=".05 "
+                                        strokeColor="#0680fc " *ngFor="let pathsOfPol of polygon.pointList ">
+                                    </agm-polygon>
+                                </div>
+                            </div>
+                        </agm-map>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

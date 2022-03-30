@@ -1,0 +1,22 @@
+.mystyle {
+    color: white !important;
+    background-color: #004F59 !important;
+}
+
+.dt-button-collection {
+    margin-top: -35px !important;
+    margin-left: 135px !important;
+}
+
+
+/* .dataTables_length {
+    margin-left: 4px !important;
+    float: right !important;
+}
+
+.dataTables_filter {
+    margin-top: -36px !important;
+} */
+.form-control {
+    text-transform: capitalize;
+}

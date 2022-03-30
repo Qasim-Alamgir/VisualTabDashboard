@@ -1,0 +1,39 @@
+.margin {
+    margin: 3px;
+}
+
+agm-map {
+    height: 80vh;
+}
+
+.home-icons{
+    height: 100%;
+}
+
+.home-icons .card-footer{
+    padding: 0 0 0.65rem 0.65rem;
+    background: transparent;
+    border: 0;
+}
+
+.home-icons .card-body{
+    padding-bottom: 0;
+}
+
+@media only screen and (min-device-width: 1024px) and (max-device-width: 2560px) {
+    agm-map, .agm-container{
+        height: 100%;
+    }
+}
+
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1024px) {
+    .title{
+        font-size: 13px !important;
+    }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 768px) {
+    .col-reverse{
+        display: flex;
+        flex-direction: column-reverse;
+    }
+}

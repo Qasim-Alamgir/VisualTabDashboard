@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i');
+@import '~ngx-toastr/toastr';
+.marginButtonRight {
+    margin-right: 10px !important;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.gm-style div[aria-hidden="true"] {
+    background-color: rgb(0, 123, 255, 1) !important;
+    padding: 5px;
+    border-radius: 15px;
+}
+.gm-style-iw button:focus {
+    outline: 0;
+}
+.select2-container--default .select2-selection--single {
+    height: 37px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 35px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 35px;
+}

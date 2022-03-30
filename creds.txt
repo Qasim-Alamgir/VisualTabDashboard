@@ -1,0 +1,3 @@
+DB
+user: devaccor_village
+=password: devaccor_village

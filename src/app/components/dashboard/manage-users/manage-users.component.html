@@ -1,0 +1,360 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" *ngIf="userType == 'dev' || userType == 'admin'">
+            <a class="nav-link " [ngClass]="{'active': userType == 'dev' || userType == 'admin'}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Directors</a>
+        </li>
+        <li class="nav-item" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_managers == 'true'">
+            <a class="nav-link" [ngClass]="{'active': userType == 'director'}" id="profile-tab" data-toggle="tab" href="#manager" role="tab" aria-controls="profile" aria-selected="false">Managers</a>
+        </li>
+        <li class="nav-item" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_supervisors == 'true'">
+            <a class="nav-link " [ngClass]="{'active': userType == 'manager'}" id="super-tab" data-toggle="tab" href="#superviser" role="tab" aria-controls="home" aria-selected="true">Supervisors</a>
+        </li>
+        <li>
+            <button class="btn btn-primary" (click)="addnewUserModal()">Add New</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div *ngIf="userType == 'dev' || userType == 'admin'" class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="col-xl-12 col-md-12 mb-4" *ngIf="userType == 'dev' || userType == 'admin'">
+                <div class="card shadow mb-4">
+                    <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                        <h6 class="m-0 font-weight-bold text-primary">Manage Director's profile to the Safety Health App Network </h6>
+                    </div>
+                    <div class="card-body" *ngIf="director">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" [dtOptions]="dtOptions" datatable width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Position</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let user of director; let j=index">
+                                        <td>{{user.created_at | date: 'MM/dd/yyyy'}}</td>
+                                        <td>{{user.name}}</td>
+                                        <td>{{user.email}}</td>
+                                        <td style="text-transform: capitalize;">{{user.user_type}}</td>
+                                        <td>
+                                            <a title="Update Password" href="javascript:void(0)" (click)="updatePasswordModal(user.id)" class="btn btn-primary marginButtonRight"><i class="fa fa-key"></i></a>
+                                            <a href="javascript:void(0)" (click)="updateAdmins(j,'director')" class="btn btn-primary sm-icon marginButtonRight"><i class="fa fa-edit"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-danger sm-icon" (click)="deleteModal(user.id)"><i class="fa fa-trash"></i></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [ngClass]="{'active': userType == 'director','show': userType == 'director'}" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_managers == 'true'" class="tab-pane fade" id="manager" role="tabpanel" aria-labelledby="super-tab">
+            <div class="col-xl-12 col-md-12 mb-4" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_managers == 'true'">
+                <div class="card shadow mb-4">
+                    <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                        <h6 class="m-0 font-weight-bold text-primary">Manage Managers's profile to the Safety Health App Network </h6>
+                    </div>
+                    <div class="card-body" *ngIf="managers">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" [dtOptions]="dtOptions" datatable width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Position</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let user of managers; let j=index">
+                                        <td>{{user.created_at | date: 'MM/dd/yyyy'}}</td>
+                                        <td>{{user.name}}</td>
+                                        <td>{{user.email}}</td>
+                                        <td style="text-transform: capitalize;">{{user.user_type}}</td>
+                                        <td>
+                                            <a title="Update Password" href="javascript:void(0)" (click)="updatePasswordModal(user.id)" class="btn btn-primary marginButtonRight"><i class="fa fa-key"></i></a>
+                                            <a href="javascript:void(0)" (click)="updateAdmins(j,'manager')" class="btn btn-primary sm-icon marginButtonRight"><i class="fa fa-edit"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-danger sm-icon" (click)="deleteModal(user.id)"><i class="fa fa-trash"></i></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [ngClass]="{'active': userType == 'manager','show': userType == 'manager'}" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_supervisors == 'true'" class="tab-pane fade" id="superviser" role="tabpanel" aria-labelledby="super-tab">
+            <div class="col-xl-12 col-md-12 mb-4" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_supervisors == 'true'">
+                <div class="card shadow mb-4">
+                    <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                        <h6 class="m-0 font-weight-bold text-primary">Manage Supervisor's profile to the Safety Health App Network </h6>
+                    </div>
+                    <div class="card-body" *ngIf="supervisers">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" [dtOptions]="dtOptions" datatable width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Position</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let user of supervisers; let j=index">
+                                        <td>{{user.created_at | date: 'MM/dd/yyyy'}}</td>
+                                        <td>{{user.name}}</td>
+                                        <td>{{user.email}}</td>
+                                        <td style="text-transform: capitalize;">Supervisor</td>
+                                        <td>
+                                            <a title="Update Password" href="javascript:void(0)" (click)="updatePasswordModal(user.id)" class="btn btn-primary marginButtonRight"><i class="fa fa-key"></i></a>
+                                            <a href="javascript:void(0)" (click)="updateAdmins(j,'superviser')" class="btn btn-primary sm-icon marginButtonRight"><i class="fa fa-edit"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-danger sm-icon" (click)="deleteModal(user.id)"><i class="fa fa-trash"></i></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+<!-- Delete User -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are You Sure?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+            </div>
+            <div class="modal-body">Select "Delete" below if you are ready to delete this Employee.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" style="color: white" (click)="deleteUser()">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Delete User -->
+<!-- Add User -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Add Dashboard</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">×</span>
+    </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" [formGroup]="addAdminForm" (ngSubmit)="addNewAdmin()" *ngIf="!checkUpdate">
+                    <div class="form-group">
+                        <label>*Name</label>
+                        <input type="text" formControlName="name" class="form-control form-control-user" placeholder="Enter Name">
+                    </div>
+                    <div class="form-group">
+                        <label>*Email</label>
+                        <input type="email" [class.is-invalid]="addAdminForm.get('email').invalid && addAdminForm.get('email').touched" formControlName="email" class="form-control form-control-user" placeholder="Enter Email">
+                    </div>
+                    <div class="form-group">
+                        <label>*Role</label>
+                        <select style="border-radius: 30px;" class="form-control" formControlName="user_type">
+                        <option class="form-control" value="director" *ngIf="userType == 'dev' || userType=='admin'">Director</option>
+                        <option class="form-control" value="manager" *ngIf="userType == 'dev' || userType=='admin' || userProfile?.manage_managers == 'true'">Manager</option>
+                        <option class="form-control" value="superviser" *ngIf="userType == 'dev' || userType=='admin' || userProfile?.manage_supervisors == 'true'">Supervisor</option>
+                      </select>
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'dev' || userType=='admin'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;" class="form-control" formControlName="department" *ngIf="addAdminForm.get('user_type').value == 'director'" multiple>
+                            <option class="form-control" style="border: 0px;" *ngFor="let item of deparmentsData" [value]="item.value">{{item.department}}</option>
+                      </select>
+                      <!-- <ng-select2 *ngIf="addAdminForm.get('user_type').value == 'director'" formControlName="department" [data]="exampleData" [options]="options">
+                    </ng-select2> -->
+                      <select style="border-radius: 30px;" class="form-control" formControlName="department" *ngIf="addAdminForm.get('user_type').value != 'director'">
+                        <option class="form-control" *ngFor="let item of deparmentsData" [value]="item.value">{{item.department}}</option>
+                    </select>
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'manager'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;text-transform: uppercase;" class="form-control" formControlName="department">
+                            <option class="form-control" value="{{department}}" style="text-transform: uppercase;">{{department}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'director'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;text-transform: uppercase;" class="form-control" formControlName="department">
+                            <option class="form-control" *ngFor="let item of directersDepartment" [value]="item" style="text-transform: capitalize;">{{item}}</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group border p-2" *ngIf="addAdminForm.controls['user_type'].value !=''">
+
+                        <div class="form-check" *ngIf="addAdminForm.controls['user_type'].value=='director'">
+                            <input formControlName="manage_managers" class="form-check-input" type="checkbox" (change)="managerFormValue($event.target.checked)" value="">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Manage Managers
+                            </label>
+                        </div>
+                        <div class="form-check" *ngIf="addAdminForm.controls['user_type'].value=='director' || addAdminForm.controls['user_type'].value=='manager'">
+                            <input formControlName="manage_supervisers" class="form-check-input" type="checkbox" (change)="supervisorFormValue($event.target.checked)" value="">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Manage Supervisors
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input formControlName="manage_employee" class="form-check-input" type="checkbox" value="" (change)="employeeFormValue($event.target.checked)">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Manage App Users
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input formControlName="track_employee" class="form-check-input" type="checkbox" value="" (change)="trackFormValue($event.target.checked)">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Track App Users
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input formControlName="manage_surveys" class="form-check-input" type="checkbox" value="" (change)="surveyFormValue($event.target.checked)">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Manage Surveys
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input formControlName="manage_messages" class="form-check-input" type="checkbox" value="" (change)="messageFormValue($event.target.checked)">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Send Emergency Messages
+                            </label>
+                        </div>
+                    </div>
+                    <button [disabled]="addAdminForm.invalid" class="btn btn-primary btn-user btn-block">
+                Add User
+              </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit User -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">×</span>
+    </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" [formGroup]="addAdminForm" (ngSubmit)="onUpdateAdmin()" *ngIf="checkUpdate">
+                    <div class="form-group">
+                        <label>*Name</label>
+                        <input type="text" formControlName="name" class="form-control form-control-user" placeholder="Enter Name">
+                    </div>
+                    <div class="form-group">
+                        <label>*Email</label>
+                        <input type="text" formControlName="email" readonly class="form-control form-control-user" placeholder="Enter Email">
+                    </div>
+                    <div class="form-group">
+                        <label>*Role</label>
+                        <select style="border-radius: 30px;" class="form-control" formControlName="user_type">
+                        <option class="form-control" value="director" *ngIf="userType == 'dev' || userType=='admin'">Director</option>
+                        <option class="form-control" value="manager" *ngIf="userType == 'dev' || userType=='admin' || userProfile?.manage_managers == 'true'">Manager</option>
+                        <option class="form-control" value="superviser" *ngIf="userType == 'dev' || userType=='admin' || userProfile?.manage_supervisors == 'true'">Supervisor</option>
+                      </select>
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'dev' || userType=='admin'">
+                        <label>*Department</label>
+                        <br>
+                        <ng-select2 *ngIf="addAdminForm.get('user_type').value == 'director'" formControlName="department" [data]="exampleData" [options]="options">
+                        </ng-select2>
+                        <!-- <select style="border-radius: 30px;" class="form-control" formControlName="department" *ngIf="addAdminForm.get('user_type').value == 'director'" multiple>
+                            <option class="form-control" style="border: 0px;" *ngFor="let item of deparmentsData" [value]="item.value">{{item.department}}</option>
+                        </select> -->
+                        <select style="border-radius: 30px;" class="form-control" formControlName="department" *ngIf="addAdminForm.get('user_type').value != 'director'">
+                        <option class="form-control" *ngFor="let item of deparmentsData" [ngValue]="item.value">{{item.department}}</option>
+                      </select>
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'manager' || userType=='director'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;text-transform: uppercase;" class="form-control" formControlName="department">
+                        <option class="form-control" [ngValue]="department" style="text-transform: uppercase;">{{department}}</option>
+                      </select>
+                    </div>
+                    
+                    <div class="form-group border p-2" *ngIf="addAdminForm.controls['user_type'].value !=''">
+
+                        <div class="form-check" *ngIf="addAdminForm.controls['user_type'].value=='director'">
+                            <input formControlName="manage_managers" class="form-check-input" type="checkbox" (change)="managerFormValue($event.target.checked)" value="">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Manage Managers
+                            </label>
+                        </div>
+                        <div class="form-check" *ngIf="addAdminForm.controls['user_type'].value=='director' || addAdminForm.controls['user_type'].value=='manager'">
+                            <input formControlName="manage_supervisers" class="form-check-input" type="checkbox" (change)="supervisorFormValue($event.target.checked)" value="">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Manage Supervisors
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input formControlName="manage_employee" class="form-check-input" type="checkbox" value="" (change)="employeeFormValue($event.target.checked)">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Manage App Users
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input formControlName="track_employee" class="form-check-input" type="checkbox" value="" (change)="trackFormValue($event.target.checked)">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Track App Users
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input formControlName="manage_surveys" class="form-check-input" type="checkbox" value="" (change)="surveyFormValue($event.target.checked)">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Manage Surveys
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input formControlName="manage_messages" class="form-check-input" type="checkbox" value="" (change)="messageFormValue($event.target.checked)">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Send Emergency Messages
+                            </label>
+                        </div>
+                    </div>
+                    <button [disabled]="addAdminForm.invalid" class="btn btn-primary btn-user btn-block">
+              Update User
+            </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  User  Password-->
+<div class="modal fade" id="passwordModals" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are You Sure?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">×</span>
+</button>
+            </div>
+            <div class="modal-body">Select "Yes" to send temporary password to Employee's email.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" style="color: white" (click)="updatePassord()">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End User Password-->
+<ngx-spinner></ngx-spinner>

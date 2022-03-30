@@ -1,0 +1,55 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-5 col-md-5 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h6 class="m-0 font-weight-bold text-primary">Create new Footer</h6>
+                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#addSurveyModal">Edit</a>
+                </div>
+                <div class="card-body" *ngIf="footer">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Copyright</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{footer.copyright}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Survey modal -->
+<div id="addSurveyModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Copyright</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="addFooterForm" (ngSubmit)="addFooter()">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="email-login">*Copyright</label>
+                            <input class="form-control" formControlName="text" placeholder="Enter text">
+                        </div>
+
+                    </div>
+                    <button type="submit" class="btn btn-secondary btn-lg btn-block" type="submit" [disabled]="addFooterForm.invalid">Add Footer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Add Survey Modal -->
+<ngx-spinner></ngx-spinner>

@@ -1,0 +1,241 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" *ngIf="userType == 'dev' || userType == 'admin'">
+            <a class="nav-link " [ngClass]="{'active': userType == 'dev' || userType == 'admin'}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Directors</a>
+        </li>
+        <li class="nav-item" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_managers == 'true'">
+            <a class="nav-link" [ngClass]="{'active': userType == 'director'}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Managers</a>
+        </li>
+        <li class="nav-item" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_supervisors == 'true'">
+            <a class="nav-link " [ngClass]="{'active': userType == 'manager'}" id="super-tab" data-toggle="tab" href="#superviser" role="tab" aria-controls="home" aria-selected="true">Supervisors</a>
+        </li>
+
+        <li class="nav-item" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_employees == 'true'">
+            <a class="nav-link" [ngClass]="{'active': userType == 'superviser'}" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Employees</a>
+        </li>
+        <li class="nav-item" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_reports == 'true'">
+            <a class="nav-link" id="report-tab" data-toggle="tab" href="#report" role="tab" aria-controls="report" aria-selected="false">Survey Reporting</a>
+        </li>
+    </ul>
+    <!-- [ngClass]="{'active': userType == 'manager','show': userType == 'manager'}" -->
+    <div class="tab-content" id="myTabContent">
+        <div *ngIf="userType == 'dev' || userType == 'admin'" class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="row">
+                <div class="col-xl-12 col-md-12 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                            <h6 class="m-0 font-weight-bold text-primary">Directors</h6>
+                            <div class="row">
+                                <!-- <a href="javascript:void(0)" (click)="onRefresh('director')" title="Refresh" class="btn btn-primary sm-icon marginButtonRight"><i class="fa fa-retweet"></i></a>
+                                <input style="width: auto;" [(ngModel)]="filterDate" type="date" class="form-control" (change)="changeValues($event,'director')"> -->
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table *ngIf="directors" id="myTable" class="table table-bordered text-center" [dtOptions]="dtOptions" datatable width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Created At</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Added By</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of directors; let j=index">
+                                        <td>{{item.created_at | date: 'MM/dd/yyyy'}}</td>
+                                        <td>{{item.name}}</td>
+                                        <td><a [routerLink]="['report-details',item.id]"><b>{{item.email}}</b></a></td>
+                                        <td>{{item.department}}</td>
+                                        <td>{{item.added.name}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [ngClass]="{'active': userType == 'manager','show': userType == 'manager'}" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_supervisors == 'true'" class="tab-pane fade" id="superviser" role="tabpanel" aria-labelledby="super-tab">
+            <div class="row">
+                <div class="col-xl-12 col-md-12 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                            <h6 class="m-0 font-weight-bold text-primary">Supervisors</h6>
+                            <div class="row">
+                                <!-- <a href="javascript:void(0)" (click)="onRefresh('superviser')" title="Refresh" class="btn btn-primary sm-icon marginButtonRight"><i class="fa fa-retweet"></i></a>
+                                <input style="width: auto;" [(ngModel)]="filterDate" type="date" class="form-control" (change)="changeValues($event,'superviser')"> -->
+                            </div>
+                        </div>
+                        <div class="card-body" *ngIf="supervisors">
+                            <table class="table table-bordered text-center" [dtOptions]="dtOptions" datatable width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Created At</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Added By</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of supervisors; let j=index">
+                                        <td>{{item.created_at | date: 'MM/dd/yyyy'}}</td>
+                                        <td>{{item.name}}</td>
+                                        <td><a [routerLink]="['report-details',item.id]"><b>{{item.email}}</b></a></td>
+                                        <td>{{item.department}}</td>
+                                        <td>{{item.added.name}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [ngClass]="{'active': userType == 'director','show': userType == 'director'}" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_managers == 'true'" class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="row">
+                <div class="col-xl-12 col-md-12 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                            <h6 class="m-0 font-weight-bold text-primary">Managers</h6>
+                            <div class="row">
+                                <!-- <a href="javascript:void(0)" (click)="onRefresh('manager')" title="Refresh" class="btn btn-primary sm-icon marginButtonRight"><i class="fa fa-retweet"></i></a>
+                                <input style="width: auto;" [(ngModel)]="filterDate" type="date" class="form-control" (change)="changeValues($event,'manager')"> -->
+                            </div>
+                        </div>
+                        <div class="card-body" *ngIf="managers">
+                            <table class="table table-bordered text-center" [dtOptions]="dtOptions" datatable width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Created At</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Added By</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of managers; let j=index">
+                                        <td>{{item.created_at | date: 'MM/dd/yyyy'}}</td>
+                                        <td>{{item.name}}</td>
+                                        <td><a [routerLink]="['report-details',item.id]"><b>{{item.email}}</b></a></td>
+                                        <td>{{item.department}}</td>
+                                        <td>{{item.added.name}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [ngClass]="{'active': userType == 'superviser','show': userType == 'superviser'}" *ngIf="userType == 'dev' || userType == 'admin' || userProfile?.manage_employees == 'true'" class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="row">
+                <div class="col-xl-12 col-md-12 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                            <h6 class="m-0 font-weight-bold text-primary">Employees</h6>
+                            <div class="row">
+                                <!-- <a href="javascript:void(0)" (click)="onRefresh('employee')" title="Refresh" class="btn btn-primary sm-icon marginButtonRight"><i class="fa fa-retweet"></i></a>
+                                <input style="width: auto;" [(ngModel)]="filterDate" type="date" class="form-control" (change)="changeValues($event,'employee')"> -->
+                            </div>
+                        </div>
+                        <div class="card-body" *ngIf="employees">
+                            <table class="table table-bordered text-center" [dtOptions]="dtOptions" datatable width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Created At</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of employees; let j=index">
+                                        <td>{{item.created_at | date: 'MM/dd/yyyy'}}</td>
+                                        <td>{{item.name}}</td>
+                                        <td><a [routerLink]="['employee-report-details',item.id]"><b>{{item.email}}</b></a></td>
+                                        <td>{{item.department}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="userType == 'dev' || userType == 'admin'  || userProfile?.manage_reports == 'true'" class="tab-pane fade" id="report" role="tabpanel" aria-labelledby="report-tab">
+            <div class="p-2">
+                <div class="card">
+                    <div class="card shadow mb-4">
+                        <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                            <h6 class="m-0 font-weight-bold text-primary">Report Filters</h6>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-row mb-2">
+                                    <div class="col-4 mb-2">
+                                        <mat-form-field>
+                                            <label>Role*</label>
+                                            <select class="form-control" [formControl]="RoleControl">
+                                                <option *ngFor="let item of Roles" value="{{item.value}}">
+                                                    {{item.name}}
+                                                </option>
+                                            </select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-4 mb-2">
+                                        <label>Department</label>
+                                        <select *ngIf="userType !='manager' && userType !='superviser'"  class="form-control" [(ngModel)]="selectedDepartment" [ngModelOptions]="{standalone: true}" (change)="changeDepartment($event)">
+                                                <option *ngFor="let item of departments" value="{{item.value}}">{{item.department}}</option>
+                                            </select>
+                                            <select *ngIf="userType =='manager' || userType =='superviser'"  class="form-control" [(ngModel)]="selectedDepartment" [ngModelOptions]="{standalone: true}" (change)="changeDepartment($event)">
+                                                <option value="{{department}}">Select Department</option>
+                                                <option value="{{department}}">{{department}}</option>
+                                            </select>
+                                    </div>
+                                    <div class="col-4 mb-2">
+                                        <mat-form-field>
+                                            <label>Employee</label>
+                                            <input class="form-control" type="text" placeholder="Choose Employee" aria-label="Number" matInput [formControl]="employeeControl" [matAutocomplete]="autos">
+                                            <mat-autocomplete #autos="matAutocomplete">
+                                                <mat-option *ngFor="let option of employeefilteredOptions | async" [value]="option">
+                                                    {{option}}
+                                                </mat-option>
+                                            </mat-autocomplete>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-6">
+                                        <label>From Date</label>
+                                        <input class="form-control" type="date" placeholder="Choose Date" [formControl]="dateControl">
+                                    </div>
+                                    <div class="col-6">
+                                        <label>To Date</label>
+                                        <input class="form-control" type="date" placeholder="Choose Date" [formControl]="enddateControl">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button (click)="getReportsData('login')" class="btn btn-primary mb-2 btn-block">Get Login Survey Report</button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button (click)="getReportsData1('other')" [disabled]="selectedDepartment == '' || employeeControl.value == ''" class="btn btn-primary mb-2 btn-block">Get Other Survey Report</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+<ngx-spinner></ngx-spinner>

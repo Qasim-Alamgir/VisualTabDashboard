@@ -1,0 +1,416 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 col-md-12 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h6 class="m-0 font-weight-bold text-primary">Create new survey</h6>
+                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal"
+                        data-target="#addSurveyModal">Add New</a>
+                </div>
+                <div class="card-body" *ngIf="surveys">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Push To Devices</th>
+                                    <th>Get Questions</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let survey of surveys;let j=index">
+                                    <td>{{survey.name}}</td>
+                                    <td>
+                                        <div *ngIf="survey.name!='At Login'">
+                                            <form [formGroup]="pushSurveyForm" *ngIf="isUser == 'admin' || isUser == 'dev'">
+                                                <select class="form-control mb-1" formControlName="department">
+                                                    <option *ngFor="let item of departments" value="{{item.value}}">{{item.department}}</option>
+                                                </select>
+                                                <select class="form-control mb-1" formControlName="role">
+                                                    <option *ngFor="let item of roles" value="{{item.value}}">{{item.name}}</option>
+                                                </select>
+                                                <button [disabled]="pushSurveyForm.invalid" (click)="pushSurveyToAllUsers(survey.id)" href="javascript:void(0)" class="btn btn-primary btn-sm btn-block"><i class="fa fa-message"></i>Send</button>
+                                            </form>
+                                            <button *ngIf="isUser != 'admin' && isUser != 'dev'" (click)="pushSurveyToAllUsers(survey.id)" href="javascript:void(0)" class="btn btn-primary btn-sm btn-block"><i class="fa fa-message"></i>Send</button>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" (click)="getQuestionsFromSurvey(j)"
+                                            class="btn btn-primary">Get Question</a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" class="marginButtonRight btn btn-primary btn-sm"
+                                            (click)="openUpdateModal(survey)"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div #topScrollAnchor class="col-xl-12 col-md-12 mb-4" *ngIf="questions">
+            <div class="card shadow mb-4">
+                <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h6 class="m-0 font-weight-bold text-primary">Created Questions</h6>
+                    <!-- <button class="btn btn-primary" (click)="questionModal()">Add New Question</button> -->
+                    <button class="btn btn-primary" (click)="questionModal()" *ngIf="questions.id == 1 || questions.other_questions.length == 0">Update Survey Questions</button>
+                </div>
+                <div class="card-body" *ngIf="questions">
+                    <div class="table-responsive">
+                        <table [dtOptions]="dtOptions" class="table table-bordered" datatable width="100%"
+                            cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Question</th>
+                                    <th>Survey Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="questions.id == '1'">
+                                <tr *ngFor="let question of questions.question;let j=index">
+                                    <td>{{question.created_at | date: 'MM/dd/yyyy'}}</td>
+                                    <td>{{question.question}}</td>
+                                    <td>{{questions.name}}</td>
+                                    <td>
+                                        <a href="javascript:void(0)" class="btn btn-primary btn-sm marginButtonRight"
+                                            (click)="openUpdateQuestionModal(question)"><i class="fa fa-edit"></i></a>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="questions.id != '1'">
+                                <tr *ngFor="let question of questions.other_questions;let j=index">
+                                    <td>{{question.created_at | date: 'MM/dd/yyyy'}}</td>
+                                    <td>{{question.question}}</td>
+                                    <td>{{questions.name}}</td>
+                                    <td>
+                                        <a href="javascript:void(0)" class="btn btn-primary btn-sm marginButtonRight"
+                                            (click)="openUpdateQuestionModal(question)"><i class="fa fa-edit"></i></a>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div #topScrollAnchor class="col-xl-12 col-md-12 mb-4">
+            <div class="card shadow mb-4" *ngIf="checkQuestion">
+                <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h6 class="m-0 font-weight-bold text-primary" *ngIf="!checkQuestion">Please Create Max 5 Questions for each survey</h6>
+                    <h6 class="m-0 font-weight-bold text-primary" *ngIf="checkQuestion">Update Question</h6>
+                </div>
+                <div class="card-body" *ngIf="surveys">
+                    <div>
+                        <form class="user" [formGroup]="updateQuestionsForm" *ngIf="checkQuestion" (ngSubmit)="updateQuestion()">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>*Survey</label>
+                                    <select formControlName="survey" class="form-control" style="border-radius: 30px;">
+                                      <option *ngFor="let item of surveys" value="{{item.id}}">{{item.name}}</option>
+                                   </select>
+                                </div>
+                                <div *ngIf="updateQuestionsForm.get('type').value == 'radio'" class="form-group col-md-6">
+                                    <label>*Expected Answer</label>
+                                    <select formControlName="expected_ans" class="form-control" style="border-radius: 30px;">
+                                      <option value="Yes">Yes</option>
+                                      <option value="No">No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>*Question</label>
+                                    <input formControlName="question" type="text" class="form-control form-control-user" placeholder="Enter Question">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-user btn-block" [disabled]="updateQuestionsForm.invalid"> Update Question </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <!-- <div class="col-xl-12 col-md-12">
+            <div class="card shadow mb-4">
+                <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h6 class="m-0 font-weight-bold text-primary">Please Create Min 5 Questions for each survey</h6>
+                </div>
+                <div class="card-body" *ngIf="surveys">
+                    <div>
+                        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+                            <div class="form-group col-md-3">
+                                <label>*Survey</label>
+                                <select formControlName="survey" class="form-control">
+                              <option *ngFor="let item of surveys" value="{{item.id}}">{{item.name}}</option>
+                           </select>
+                            </div>
+                            <table class="table table-bordered" formArrayName="quantities">
+                                <tr *ngFor="let quantity of quantities().controls; let i=index" [formGroupName]="i">
+                                    <td>
+                                        <div class="form-group col-md-12">
+                                            <label>*Question Type</label>
+                                            <select formControlName="type" class="form-control">
+                                            <option value="radio">Yes/No</option>
+                                            <option value="multiple" >Multiple Choices</option>
+                                          </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group col-md-12">
+                                            <label>*Question</label>
+                                            <input formControlName="question" type="text" class="form-control" placeholder="Enter Question">
+                                        </div>
+                                    </td>
+                                    <td formArrayName="answers">
+                                        <div class="form-group col-md-12" *ngFor="let answer of answers(i).controls; let j=index" [formGroupName]="j">
+                                            <div *ngIf="quantity.get('type').value == 'radio'">
+                                                <label>*Expected Answer</label>
+                                                <select formControlName="answer" class="form-control">
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                            </div>
+                                            <div *ngIf="quantity.get('type').value == 'fill'">
+                                                <label>*Expected Answer</label>
+                                                <input formControlName="answer" type="text" class="form-control" placeholder="Expected Answer">
+                                            </div>
+                                            <div *ngIf="quantity.get('type').value == 'multiple'">
+                                                <div class="d-flex justify-content">
+                                                    <input formControlName="answer" type="text" class="form-control" placeholder="Expected Answer">
+                                                    <a href="javascript:void(0)" class="btn btn-primary" (click)="addAnswer(i)"><i class="fa fa-check"></i></a>
+                                                    <a *ngIf="j>0" href="javascript:void(0)" class="btn btn-danger" (click)="removeAnswerAt(i, j)"><i class="fa fa-times"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button (click)="removeQuantity(i)" class="btn btn-danger">Remove</button>
+                                    </td>
+                                </tr>
+                            </table>
+                            <button type="button" (click)="addQuantity()" class="btn btn-primary marginButtonRight">Add More</button>
+
+                            <button type="submit" [disabled]="productForm.invalid" class="btn btn-primary">Submit Questions</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+<!-- /.container-fluid -->
+<!-- Add Survey modal -->
+<div id="addSurveyModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Survey</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="addSurveyForm" (ngSubmit)="addSurvey()">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="email-login">*Name</label>
+                            <input class="form-control" formControlName="name" placeholder="Enter Name">
+                        </div>
+
+                    </div>
+                    <button type="submit" class="btn btn-secondary btn-lg btn-block" type="submit"
+                        [disabled]="addSurveyForm.invalid">Add Survey</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Add Survey Modal -->
+<!-- Delete Survey -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are You Sure?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Delete" below if you are ready to delete this Survey.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" style="color: white" (click)="deleteUser()">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Delete Survey -->
+<!-- Update Survey modal -->
+<div id="updateSurveyModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update Survey</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="updateSurveyForm" (ngSubmit)="updateUser()">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="email-login">Name</label>
+                            <input class="form-control" formControlName="name" placeholder="Enter Name">
+                        </div>
+
+                    </div>
+                    <button type="submit" class="btn btn-secondary btn-lg btn-block" type="submit"
+                        [disabled]="updateSurveyForm.invalid">Update Survey</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Update Survey Modal -->
+
+
+
+<!-- Delete Question -->
+<div class="modal fade" id="deleteQuestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are You Sure?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Delete" below if you are ready to delete this Question.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" style="color: white" (click)="deleteQuestion()">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Delete Question -->
+<!-- Add Question -->
+<!-- <div class="modal fade" id="addQuestionModal" tabindex="-1" role="dialog" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addQuestionModalLabel">New Question</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" [formGroup]="addQuestionsForm" (ngSubmit)="addQuestion()">
+                    <div class="form-row">
+                        <label>*Expected Answer</label>
+                        <select formControlName="expected_ans" class="form-control" style="border-radius: 30px;">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label>*Question</label>
+                            <textarea formControlName="question" type="text" class="form-control form-control-user" placeholder="Enter Question"></textarea>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-user btn-block" [disabled]="addQuestionsForm.invalid"> Add Question </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> -->
+<div class="modal fade" id="addQuestionModal" tabindex="-1" role="dialog" aria-labelledby="addQuestionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addQuestionModalLabel">Are you sure you want to update survey questions?
+                </h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+                    <div formArrayName="quantities">
+                        <div class="row" *ngFor="let quantity of quantities().controls; let i=index"
+                            [formGroupName]="i">
+                            <div class="form-group col-7">
+                                <label>*Question</label>
+                                <input formControlName="question" type="text" class="form-control"
+                                    placeholder="Enter Question">
+                            </div>
+                            <div class="col-3">
+                                <label>*Expected Answer</label>
+                                <select formControlName="expected_ans" class="form-control">
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label>Remove</label>
+                                <button (click)="removeQuantity(i)" class="btn btn-danger">Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" (click)="addQuantity()" class="btn btn-primary marginButtonRight ">Add
+                        More</button>
+                    <button type="submit" [disabled]="productForm.invalid" class="btn btn-primary">Update
+                        Questions</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Update Question -->
+<div class="modal fade" id="updateQuestionModal" tabindex="-1" role="dialog" aria-labelledby="updateQuestionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateQuestionModalLabel">Edit Question</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" [formGroup]="updateQuestionsForm" (ngSubmit)="updateQuestion()">
+                    <div class="form-row">
+                        <label>*Expected Answer</label>
+                        <select formControlName="expected_ans" class="form-control" style="border-radius: 30px;">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label>*Question</label>
+                            <textarea formControlName="question" type="text" class="form-control form-control-user"
+                                placeholder="Enter Question"></textarea>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-user btn-block" [disabled]="updateQuestionsForm.invalid"> Update
+                        Question </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<ngx-spinner></ngx-spinner>

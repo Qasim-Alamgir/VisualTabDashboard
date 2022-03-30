@@ -1,0 +1,207 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h6 class="m-0 font-weight-bold text-primary">Manage Employees's Profile</h6>
+                    <button class="btn btn-primary" (click)="addNew()">Add New</button>
+                </div>
+                <div class="card-body" *ngIf="customers">
+                    <div class="table-responsive">
+                        <table [dtOptions]="dtOptions" class="table table-bordered" datatable width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let employee of customers; let j=index">
+                                    <td>{{employee.created_at | date: 'MM/dd/yyyy'}}</td>
+                                    <td>{{employee.name}}</td>
+                                    <td>{{employee.email}}</td>
+                                    <td>
+                                        <a title="Send Direct Notification" href="javascript:void(0)" (click)="openMessageModal(employee.id)" class="btn btn-info marginButtonRight"><i class="fa fa-comments"></i></a>
+                                        <a title="Update Password" href="javascript:void(0)" (click)="updatePasswordModal(employee.id)" class="btn btn-primary marginButtonRight"><i class="fa fa-key"></i></a>
+                                        <a title="Edit Profile" href="javascript:void(0)" (click)="updateAdmins(j)" class="btn btn-primary marginButtonRight"><i class="fa fa-edit"></i></a>
+                                        <a title="Delete Employee" href="javascript:void(0)" class="btn btn-danger" (click)="deleteModal(employee.id)"><i class="fa fa-trash"></i></a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Send Direct Message -->
+<div class="modal fade" id="directMessages" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Send Direct Notification to Employee</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="messageForm" (ngSubmit)="senddirectMessage()">
+                    <div class="form-group">
+                        <label for="inputState">* Message Title </label>
+                        <input formControlName="title" type="text" class="form-control" placeholder="Enter Title">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputState">* Message Body </label>
+                        <input formControlName="message" type="text" class="form-control" placeholder="Message Body">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="messageForm.invalid">Send Message</button>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+<!-- Delete User -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are You Sure?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+            </div>
+            <div class="modal-body">Select "Delete" below if you are ready to delete this Employee.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" style="color: white" (click)="deleteUser()">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Delete User -->
+<!--  User  Password-->
+<div class="modal fade" id="passwordModals" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are You Sure?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">×</span>
+</button>
+            </div>
+            <div class="modal-body">Select "Yes" to send temporary password to Employee's email.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" style="color: white" (click)="updatePassord()">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End User Password-->
+<!-- Edit User -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">×</span>
+    </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" [formGroup]="updateCustomerForm" (ngSubmit)="onUpdateAdmin()">
+                    <div class="form-group">
+                        <label>*Name</label>
+                        <input type="text" formControlName="name" class="form-control form-control-user" placeholder="Enter Name">
+                    </div>
+                    <div class="form-group">
+                        <label>*Email</label>
+                        <input type="text" disabled formControlName="email" class="form-control form-control-user" placeholder="Enter Email">
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'dev' || userType=='admin'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;" class="form-control" formControlName="department">
+                        <option class="form-control" *ngFor="let item of deparmentsData" [ngValue]="item.value">{{item.department}}</option>
+                      </select>
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'director' || userType == 'superviser' || userType=='manager'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;text-transform: uppercase" class="form-control" formControlName="department">
+                            <option class="form-control" value="{{department}}" style="text-transform: capitalize;">{{department}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>*User Role</label>
+                        <select style="border-radius: 30px;" class="form-control" formControlName="user_type">
+                            <option class="form-control" value="employee" style="text-transform: capitalize;">Employee</option>
+                            <option class="form-control" value="superviser" style="text-transform: capitalize;">Supervisor</option>
+                        </select>
+                    </div>
+                    <button [disabled]="updateCustomerForm.invalid" class="btn btn-primary btn-user btn-block">
+              Update Employee
+            </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add User -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Add Employee</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">×</span>
+    </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" [formGroup]="addCustomerForm" (ngSubmit)="addNewEmployee()">
+                    <div class="form-group">
+                        <label>*Name</label>
+                        <input type="text" formControlName="name" class="form-control form-control-user" placeholder="Enter Name">
+                    </div>
+                    <div class="form-group">
+                        <label>*Email</label>
+                        <input type="email" [class.is-invalid]="addCustomerForm.get('email').invalid && addCustomerForm.get('email').touched" type="text" formControlName="email" class="form-control form-control-user" placeholder="Enter Email">
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'dev' || userType=='admin'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;" class="form-control" formControlName="department">
+                            <option class="form-control" *ngFor="let item of deparmentsData" [value]="item.value">{{item.department}}</option>
+                      </select>
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'director'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;text-transform: uppercase;" class="form-control" formControlName="department">
+                            <option class="form-control" *ngFor="let item of directersDepartment" [value]="item" style="text-transform: capitalize;">{{item}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group" *ngIf="userType == 'superviser' || userType=='manager'">
+                        <label>*Department</label>
+                        <select style="border-radius: 30px;text-transform: uppercase;" class="form-control" formControlName="department">
+                            <option class="form-control" value="{{department}}" style="text-transform: capitalize;" selected>{{department}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>*Job Type</label>
+                        <select style="border-radius: 30px;" class="form-control" formControlName="job">
+                            <option *ngFor="let type of jobs" [ngValue]="type.name">{{type.value}}</option>
+
+                      </select>
+                    </div>
+                    <button [disabled]="addCustomerForm.invalid" class="btn btn-primary btn-user btn-block">
+                Add Employee
+              </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<ngx-spinner></ngx-spinner>

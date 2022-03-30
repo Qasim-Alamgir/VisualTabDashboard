@@ -1,0 +1,130 @@
+<div class="container-fluid" *ngIf="userName">
+
+    <!-- Page Heading -->
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h2 mb-0 text-gray-800 text-uppercase text-dark">{{userName}}</h1>
+        <h1 class="h2 mb-0 text-gray-800 text-uppercase text-success">{{userType}}</h1>
+    </div>
+    <!-- <h4 style="text-transform: capitalize;">Welcome {{Auth::user()->f_name}} {{Auth::user()->l_name}} ! {{Auth::user()->user_type}}</h4> -->
+    <!-- Content Row -->
+    <div class="row">
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <a href="javascript:void(0)" (click)="showTableContent('Emergency Messages')">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-l font-weight-bold text-success text-uppercase mb-1">Emergency Messages</div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800">{{emergency.length}}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <a href="javascript:void(0)" (click)="showTableContent('Survey Messages')">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-l font-weight-bold text-primary text-uppercase mb-1">Survey Messages</div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800">{{survey.length}}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <a href="javascript:void(0)" (click)="showTableContent('Login Surveys')">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-l font-weight-bold text-danger text-uppercase mb-1">Submitted Login</div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800">{{submitLogin.length}}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <a href="javascript:void(0)" (click)="showTableContent('Other Surveys')">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-l font-weight-bold text-warning text-uppercase mb-1">Submitted Other</div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800">{{submitOther.length}}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="tableRecords">
+        <div class="col-xl-12 col-md-12 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h6 class="m-0 font-weight-bold text-primary">{{tableTitle}}</h6>
+                </div>
+                <div class="card-body" *ngIf="tableTitle == 'Login Surveys' || tableTitle == 'Other Surveys'">
+                    <table class="table table-bordered text-center" datatable width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Created At</th>
+                                <th>Survey Name</th>
+                                <th>Submission Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of tableRecords; let j=index">
+                                <td>{{item.created_at | date: 'MM/dd/yyyy'}}</td>
+                                <td>
+                                    <a *ngIf="item.status == 'completed'" [routerLink]="['/admin/survey-report/report',item.id,item.user_id,tableTitle]">{{item.survey.name}}</a>
+                                    <a *ngIf="item.status == 'pending'">{{item.survey.name}}</a>
+                                </td>
+                                <td>{{item.updated_at | date: 'MM/dd/yyyy'}}</td>
+                                <td *ngIf="item.status == 'pending'"><span class="badge badge-danger">Pending</span></td>
+                                <td *ngIf="item.status == 'completed'"><span class="badge badge-success">Completed</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-body" *ngIf="tableTitle == 'Emergency Messages' || tableTitle == 'Survey Messages'">
+                    <table class="table table-bordered text-center" datatable width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Created At</th>
+                                <th>Title</th>
+                                <th>Message</th>
+                                <th>Send By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of tableRecords; let j=index">
+                                <td>{{item.created_at | date: 'MM/dd/yyyy'}}</td>
+                                <td>{{item.title}}</td>
+                                <td>{{item.message}}</td>
+                                <td>{{item.send_by.name}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ngx-spinner></ngx-spinner>

@@ -1,0 +1,69 @@
+<div class="container-fluid">
+    <div class="agm-container">
+        <div class="form-group col-md-4">
+            <label>Enter address</label>
+            <input style="margin-bottom: 10px;" type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="Search Nearest Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
+            <div *ngIf="pointList.length>0" class="display-flex">
+                <button class="btn btn-primary marginButtonRight" (click)="saveSelectedShape()">Save Map</button>
+                <button class="btn btn-danger" (click)="deleteSelectedShape()">Clear</button>
+            </div>
+        </div>
+
+        <agm-map [zoom]=" zoom" [latitude]="lat" [longitude]="lng" [fullscreenControl]='true' [mapTypeControl]='true' (mapReady)="onMapReady($event) ">
+            <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+            <div *ngIf="show ">
+                <div *ngFor="let polygon of PolygonsArray">
+                    <agm-polygon [paths]="polygon.pointList " fillColor="#f44195 " fillOpacity=".35 " strokeColor="#f44195 " *ngFor="let pathsOfPol of polygon.pointList ">
+                    </agm-polygon>
+                </div>
+            </div>
+        </agm-map>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header  py-3 d-sm-flex align-items-center justify-content-between mb-4">
+            <h6 class="m-0 font-weight-bold text-primary">Location Points</h6>
+        </div>
+        <div class="card-body" *ngIf="PolygonsArray">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>lat</th>
+                            <th>lng</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let polygon of PolygonsArray">
+                            <td>{{polygon.id}}</td>
+                            <td>{{polygon.lat}}</td>
+                            <td>{{polygon.lng}}</td>
+                            <td>
+                                <a style="width: 60%;" href="javascript:void(0)" class="btn btn-danger btn-sm" (click)="deletePolygonModal(polygon.id)"><i class="fa fa-message"></i>Delete</a>
+                            </td>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are You Sure?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+            </div>
+            <div class="modal-body">Select "Delete" below if you are ready to delete this Location.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" style="color: white" (click)="deletePolygon()">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<ngx-spinner></ngx-spinner>
